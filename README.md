@@ -1,4 +1,4 @@
-# ninox_r_analyse
+# Script R analyse capteurs NINOX
 Script R d'analyse des capteurs NINOX permettant de mesurer la brillance du fond de ciel nocturne
 
 # Résultats
@@ -8,15 +8,16 @@ A partir d'un fichier de données, le script génère un rapport succints des do
 
 Il offre une méthode d'extraction des "meilleurs nuits"
 
-
+<p float="left">
 <img src="docs/img/Site_test_meilleurs_nuits_densite2.jpg" width=200 alt="Graphique densité des meilleurs nuits">
 <img src="docs/img/Site_test_meilleurs_nuits_densite.jpg" width=200 alt="Graphique densité des meilleurs nuits">
 <img src="docs/img/Site_test_meilleurs_nuits_magnitude.jpg" width=200 alt="Graphique magnitude des meilleurs nuits">
-
+</p>
+<p float="left">
 <img src="docs/img/Site_test_toutes_les_nuits_densite2.jpg" width=200 alt="Graphique densité de toutes les nuits">
 <img src="docs/img/Site_test_toutes_les_nuits_densite.jpg" width=200 alt="Graphique densité de toutes les nuits">
 <img src="docs/img/Site_test_toutes_les_nuits_magnitude.jpg" width=200 alt="Graphique magnitude de toutes les nuits">
-
+</p>
 # Utilisation du script
 ## Prerequis
 Installer les packages R suivants :
