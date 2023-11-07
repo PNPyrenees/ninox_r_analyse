@@ -4,7 +4,16 @@ Script R d'analyse des capteurs NINOX permettant de mesurer la brillance du fond
 # Résultats
 Script offrant une première analyse des données issues de capteurs ninox.
 
-A partir d'un fichier de données, le script génère un rapport succints des données, et produit des graphiques.
+A partir d'un fichier de données, le script génère un rapport succint des données, et produit des graphiques.
+
+```
+SITE : Site test
+FICHIER : donnees_exemples/ninox_measure.csv
+MEAN : 19.6627550706753
+MEDIAN : 20.48
+MODAL : 69
+Nb de jours avec mesure : 69
+```
 
 Il offre une méthode d'extraction des "meilleurs nuits"
 
@@ -18,6 +27,8 @@ Il offre une méthode d'extraction des "meilleurs nuits"
 <img src="docs/img/Site_test_toutes_les_nuits_densite.jpg" width=200 alt="Graphique densité de toutes les nuits">
 <img src="docs/img/Site_test_toutes_les_nuits_magnitude.jpg" width=200 alt="Graphique magnitude de toutes les nuits">
 </p>
+
+
 # Utilisation du script
 ## Prerequis
 Installer les packages R suivants :
@@ -27,6 +38,7 @@ install.packages("lubridate")
 install.packages("dplyr")
 install.packages("ggplot2")
 ```
+
 # Constante
 TODO
 
