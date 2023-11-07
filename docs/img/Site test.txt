@@ -1,0 +1,6 @@
+SITE : Site test
+FICHIER : donnees_exemples/ninox_measure.csv
+MEAN : 19.6627550706753
+MEDIAN : 20.48
+MODAL : 69
+Nb de jours avec mesure : 69
