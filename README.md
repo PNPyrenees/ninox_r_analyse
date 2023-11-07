@@ -1,10 +1,11 @@
 # Script R analyse capteurs NINOX
-Script R d'analyse des capteurs NINOX permettant de mesurer la brillance du fond de ciel nocturne
+Script R d'analyse des capteurs NINOX permettant de mesurer la brillance du fond de ciel nocturne. 
+Ces capteurs sont souvent utilisés dans le cadre d'étude sur la pollution lumineuse.
 
 # Résultats
 Script offrant une première analyse des données issues de capteurs ninox.
 
-A partir d'un fichier de données, le script génère un rapport succint des données, et produit des graphiques.
+A partir d'un fichier de données, le script génère un rapport succinct des données et produit des graphiques.
 
 ```
 SITE : Site test
@@ -36,7 +37,7 @@ L'extraction automatique des "meilleurs nuits" est réalisée avec la procédure
  * Récupération des jours où les valeurs de sqm_mag sont comprises entre 21 et 22.2 et où l'écart entre les deux valeurs ne dépasse pas 1
  * Extraction de l'ensemble des valeurs dans le fichier d'origine des jours sélectionnés précédemment
 
-Les valeurs ont été choisies de façon arbitraire et sont définies sous forme de constante que l'on peut modifier lors des appels aux fonctions.
+Les valeurs ont été choisi de façon arbitraire et sont définies sous forme de constantes que l'on peut modifier lors des appels aux fonctions.
 
 # Utilisation du script
 ## Prerequis
@@ -82,7 +83,7 @@ generate_graph(all_data, NOM_SITE, "toutes les nuits", sqm_mag_mod)
 ```
 
 # Constantes
-Pour extraire les "meilleurs nuits" un ensemble de valeurs par défaut ont été défini.
+Pour extraire les "meilleurs nuits" un ensemble de valeurs par défaut a été défini.
 
 ```R
 # Altitude du soleil au moment de la mesure *10 en degré pour filtrer les données
@@ -95,7 +96,7 @@ MAX_SQM_MAG_VAL <- 22.2
 DIFF_SQM_MAG <- 1
 ```
 
-Ces valeurs peuvent être changer lors de l'appel aux fonctions
+Ces valeurs peuvent être changées lors de l'appel aux fonctions
 ```R
 # Fonction globale
 process_all(file_name, nom_site, sun_alt_min = SUN_ALT_MIN, diff_sqm_mag = DIFF_SQM_MAG, min_sqm_mag_val = MIN_SQM_MAG_VAL, max_sqm_mag_val = MAX_SQM_MAG_VAL)
