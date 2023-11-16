@@ -5,9 +5,9 @@ Ce script offre une première analyse des données issues de capteurs NINOX.
 A partir d'un fichier de données, le script génère un rapport succinct des données et produit des graphiques.
 
 # Non prises en compte de certaines valeurs du jeu de données 
-Pour la création des figures les valeurs d’altitude de la lune au moment de la mesure, la phase de la lune et les valeurs de longitude et latitude galactique (position de la voie lactée) n'ont pas été prises en compte.
+Pour la création des figures les valeurs d’altitude de la lune au moment de la mesure, de la phase de la lune et les valeurs de longitude et latitude galactique (position de la voie lactée au moment de la mesure) n'ont pas été prises en compte.
 
-Les valeurs de la qualité du ciel sur les différents sites de mesures étant déja connu, l'extraction des meilleures nuits s'est basé sur ces différentes valeurs. Pour d'autres sites, une exploration des données et une modification des constantes sera surement nécessaire si la qualité du ciel n'est pas équivalente. 
+Les valeurs de la qualité du ciel sur les différents sites de mesures étant déja connu, l'extraction des meilleures nuits s'est basé sur ces différentes valeurs. Pour d'autres sites, une exploration des données et une modification des constantes seront surement nécessaires si la qualité du ciel n'est pas équivalente. 
 
 Pour la création des graphiques nous avons exclu les valeurs au dessous de 16 mag/arcsec² et les valeurs au dessus de 23 mag/arcsec². 
 
@@ -17,7 +17,7 @@ Pour la création des graphiques nous avons exclu les valeurs au dessous de 16 m
 Certaines données issues du système de mesure du boitier NINOX ne sont pas mesurées (exemple : "temp_ambiant" Température ambiante x 100 en °C (-10000 si inconnue)), ainsi ces colonnes ont été enlevées du jeu de données. 
 
 Pour pouvoir utiliser le fihcier et créer des graphiques, la transformation de la variable jd_utc (jour julien) en date au format yyyy_mm_dd_hh_mm_ss est nécessaire. 
-Afin d'avoir un graphique continu sur les différentes nuits (la nuit du 16 avril comprend des mesures sur le 16 et le 17 avril), une soustraction d'une journée est réalisé (sur les mesures du 17). 
+Afin d'avoir un graphique continu sur les différentes nuits (la nuit du 16 avril comprend des mesures sur le 16 et le 17 avril), une soustraction d'une journée est réalisée (sur les mesures du 17). 
 
 # résultats 
 
@@ -30,9 +30,9 @@ MEDIAN : 20.48
 MODAL : 21.39
 Number of days with measurements : 69
 ```
-Ce script permet de réaliser: 
+Ce script permet de réaliser : 
 - des histogrammes permettant de visualiser le nombre de mesures effectué et de visualiser le NSB de référence du site.
-- des graphiques permettant de visualiser le profil des nuits mesurés (seulement avec les points ou coloré en fonction de la fréquence d'occurence des valeurs)
+- des graphiques permettant de visualiser le profil des nuits mesurés (seulement avec les points ou coloré en fonction de la fréquence d'occurrence des valeurs)
 Pour la totalité des données, pour les "bonnes nuits" et pour la meilleure nuit.
  
 
@@ -59,11 +59,11 @@ Les valeurs ont été choisi de façon arbitraire et sont définies sous forme d
 
 # extraction de la (ou les) meilleure nuit
 
-L'extraction automatique de la meilleur nuit est réalisée avec la procédure suivante : 
+L'extraction automatique de la meilleure nuit est réalisée avec la procédure suivante : 
 
-* Parmis les meilleurs nuits sélectionnées préalablement, nous avons effectué un calcul permettant de sélectionner les nuits avec le profil le plus plat (constante : nb_flat_day)
+* Parmi les meilleures nuits sélectionnées préalablement, nous avons effectué un calcul permettant de sélectionner les nuits avec le profil le plus plat (constante : nb_flat_day)
 * puis parmis ces nuits les plus plates, extraire celle qui a la valeur de NSB la plus élevé (constante : nb_best_day)
-Le nombre de nuit plates et de meileure nuit sélectionné sont définies sous forme de constantes que l'on peut modifier lors des appels aux fonctions.
+Le nombre de nuits plates et de meilleure nuit sélectionné sont définies sous forme de constantes que l'on peut modifier lors des appels aux fonctions.
 
 # Utilisation du script
 ## Prerequis
