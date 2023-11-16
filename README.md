@@ -33,6 +33,7 @@ Number of days with measurements : 69
 Ce script permet de réaliser : 
 - des histogrammes permettant de visualiser le nombre de mesures effectué et de visualiser le NSB de référence du site.
 - des graphiques permettant de visualiser le profil des nuits mesurés (seulement avec les points ou coloré en fonction de la fréquence d'occurrence des valeurs)
+  
 Pour la totalité des données, pour les "bonnes nuits" et pour la meilleure nuit.
  
 
