@@ -33,16 +33,16 @@ process_all <- function(file_name, nom_site, sun_alt_min = SUN_ALT_MIN, diff_sqm
   report_txt <- c(
     sprintf("SITE : %s", nom_site),
     sprintf("FICHIER : %s", file_name),
-    sprintf("MEAN : %s", mean),
-    sprintf("MEDIAN : %s", median),
-    sprintf("MODAL : %s", sqm_mag_mod),
-    sprintf("Nb de jours avec mesure : %s", n_day)
+    sprintf("MEAN : %s", round(mean,2)),
+    sprintf("MEDIAN : %s",round( median,2)),
+    sprintf("MODAL : %s", round(sqm_mag_mod, 2)),
+    sprintf("Number of days with measurements : %s", n_day)
   )
   writeLines(report_txt, report_path)
 
   # Génération des graphique
-  generate_graph(best_night, nom_site, "meilleurs nuits", sqm_mag_mod)
-  generate_graph(all_data, nom_site, "toutes les nuits", sqm_mag_mod)
+  generate_graph(best_night, nom_site, "", sqm_mag_mod)
+  generate_graph(all_data, nom_site, "All data", sqm_mag_mod)
 }
 
 load_and_process_file <- function(file_path) {
@@ -135,11 +135,11 @@ generate_graph_density <- function(data_in, nom_site, sous_titre) {
   # GRAPHIQUES
   # Graphique  de densité : "meilleurs nuits"
   plot <- ggplot(data_in) +
-    geom_point(aes(x = heure_graph, y = sqm_mag), color = "blue", size = 00.1) +
-    scale_y_reverse() +
+    geom_point(aes(x = heure_graph, y = sqm_mag), color = "blue", size = 0.1) +
+    scale_y_reverse(breaks = seq(23,16,-1),limits=c(23,16)) +
     ylab("NSB (magsqm/arsec²)") +
-    xlab("heure (UTC)") +
-    ggtitle(sprintf("NINOX %s %s (%s nuits )", nom_site, sous_titre, n_distinct(data_in$julian_night)))
+    xlab("Time (UTC)") +
+    ggtitle(sprintf("NINOX %s %s (%s nights)", nom_site, sous_titre, n_distinct(data_in$julian_night)))
 
   ggsave(plot,
     filename = gsub(" ", "_", sprintf("%s_%s_densite.jpg", nom_site, sous_titre)),
@@ -162,12 +162,13 @@ generate_graph_magnitude <- function(data_in, nom_site, sous_titre, valeur_modal
     linetype = "dashed",
     size = 0.6
   ) + scale_x_continuous(
-    breaks = seq(15, 24, 0.5),
-    limits = c(15, 23)
+    breaks = seq(16, 23, 0.5),
+    limits = c(16, 23)
   ) + xlab(
     "NSB (magsqm/arsec²)"
   ) + ggtitle(
-    sprintf("NINOX %s %s (%s nuits )", nom_site, sous_titre, n_distinct(data_in$julian_night))
+    sprintf("NINOX %s %s (%s nights)", nom_site, sous_titre, n_distinct(data_in$julian_night)),
+    subtitle=sprintf("Modal value = %s", round(valeur_modal,2))
   )
   ggsave(plot,
     filename = gsub(" ", "_", sprintf("%s_%s_magnitude.jpg", nom_site, sous_titre)),
@@ -181,11 +182,11 @@ generate_graph_density_2 <- function(data_in, nom_site, sous_titre) {
   plot <- ggplot(data_in, aes(x = heure_graph, y = sqm_mag)) +
     geom_count(aes(color = after_stat(n), size = after_stat(n))) +
     guides(color = "legend") +
-    scale_y_reverse(breaks = seq(25, 12, -1), limits = c(23, 16)) +
+    scale_y_reverse(breaks = seq(23, 16, -1), limits = c(23, 16)) +
     ylab("NSB (magsqm/arsec²)") +
-    xlab("heure (UTC)") +
+    xlab("Time (UTC)") +
     ggtitle(
-      sprintf("NINOX %s %s (%s nuits )", nom_site, sous_titre, n_distinct(data_in$julian_night))
+      sprintf("NINOX %s %s (%s nights)", nom_site, sous_titre, n_distinct(data_in$julian_night))
     )
   scale_color_gradient(low = "red", high = "blue")
 
