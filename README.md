@@ -1,27 +1,27 @@
 # Script R analyse capteurs NINOX
-Script R d'analyse des capteurs NINOX permettant de mesurer la brillance du fond de ciel nocturne. 
+Script R d'analyse des capteurs NINOX permettant de mesurer la brillance du fond de ciel nocturne.
 Ces capteurs sont souvent utilisés dans le cadre d'étude afin de caractériser la pollution lumineuse sur un site.
 Ce script offre une première analyse des données issues de capteurs NINOX.
 A partir d'un fichier de données, le script génère un rapport succinct des données et produit des graphiques.
 
-# Non prises en compte de certaines valeurs du jeu de données 
+# Non prises en compte de certaines valeurs du jeu de données
 Pour la création des figures les valeurs d’altitude de la lune au moment de la mesure, de la phase de la lune et les valeurs de longitude et latitude galactique (position de la voie lactée au moment de la mesure) n'ont pas été prises en compte.
 
-Les valeurs de la qualité du ciel sur les différents sites de mesures étant déja connu, l'extraction des meilleures nuits s'est basé sur ces différentes valeurs. Pour d'autres sites, une exploration des données et une modification des constantes seront surement nécessaires si la qualité du ciel n'est pas équivalente. 
+Les valeurs de la qualité du ciel sur les différents sites de mesures étant déja connu, l'extraction des meilleures nuits s'est basé sur ces différentes valeurs. Pour d'autres sites, une exploration des données et une modification des constantes seront surement nécessaires si la qualité du ciel n'est pas équivalente.
 
-Pour la création des graphiques nous avons exclu les valeurs au dessous de 16 mag/arcsec² et les valeurs au dessus de 23 mag/arcsec². 
+Pour la création des graphiques nous avons exclu les valeurs au dessous de 16 mag/arcsec² et les valeurs au dessus de 23 mag/arcsec².
 
 
 # Préparation du jeu de données
 
-Certaines données issues du système de mesure du boitier NINOX ne sont pas mesurées (exemple : "temp_ambiant" Température ambiante x 100 en °C (-10000 si inconnue)), ainsi ces colonnes ont été enlevées du jeu de données. 
+Certaines données issues du système de mesure du boitier NINOX ne sont pas mesurées (exemple : "temp_ambiant" Température ambiante x 100 en °C (-10000 si inconnue)), ainsi ces colonnes ont été enlevées du jeu de données.
 
-Pour pouvoir utiliser le fihcier et créer des graphiques, la transformation de la variable jd_utc (jour julien) en date au format yyyy_mm_dd_hh_mm_ss est nécessaire. 
-Afin d'avoir un graphique continu sur les différentes nuits (la nuit du 16 avril comprend des mesures sur le 16 et le 17 avril), une soustraction d'une journée est réalisée (sur les mesures du 17). 
+Pour pouvoir utiliser le fihcier et créer des graphiques, la transformation de la variable jd_utc (jour julien) en date au format yyyy_mm_dd_hh_mm_ss est nécessaire.
+Afin d'avoir un graphique continu sur les différentes nuits (la nuit du 16 avril comprend des mesures sur le 16 et le 17 avril), une soustraction d'une journée est réalisée (sur les mesures du 17).
 
-# résultats 
+# résultats
 
-Valeurs permettant de caractériser la qualité du site. 
+Valeurs permettant de caractériser la qualité du site.
 ```
 SITE : Site test
 FICHIER : donnees_exemples/ninox_measure.csv
@@ -30,12 +30,12 @@ MEDIAN : 20.48
 MODAL : 21.39
 Number of days with measurements : 69
 ```
-Ce script permet de réaliser : 
+Ce script permet de réaliser :
 - des histogrammes permettant de visualiser le nombre de mesures effectué et de visualiser le NSB de référence du site.
 - des graphiques permettant de visualiser le profil des nuits mesurés (seulement avec les points ou coloré en fonction de la fréquence d'occurrence des valeurs)
-  
+
 Pour la totalité des données, pour les "bonnes nuits" et pour la meilleure nuit.
- 
+
 
 <p float="left">
 <img src="docs/img/Site_test_meilleurs_nuits_densite2.jpg" width=200 alt="Graphique densité des meilleurs nuits">
@@ -48,6 +48,10 @@ Pour la totalité des données, pour les "bonnes nuits" et pour la meilleure nui
 <img src="docs/img/Site_test_toutes_les_nuits_magnitude.jpg" width=200 alt="Graphique magnitude de toutes les nuits">
 </p>
 
+<p float="left">
+<img src="docs/img/Site_test__densite_all_data.jpg" width=200 alt="Graphique densité de toutes les nuits">
+<img src="docs/img/Site_test_2_best_nights_densite.jpg" width=200 alt="Graphique magnitude de toutes les nuits">
+</p>
 # Extraction des "bonnes nuits"
 
 L'extraction automatique des "meilleurs nuits" est réalisée avec la procédure suivante :
@@ -60,7 +64,7 @@ Les valeurs ont été choisi de façon arbitraire et sont définies sous forme d
 
 # extraction de la (ou les) meilleure nuit
 
-L'extraction automatique de la meilleure nuit est réalisée avec la procédure suivante : 
+L'extraction automatique de la meilleure nuit est réalisée avec la procédure suivante :
 
 * Parmi les meilleures nuits sélectionnées préalablement, nous avons effectué un calcul permettant de sélectionner les nuits avec le profil le plus plat (constante : nb_flat_day)
 * puis parmis ces nuits les plus plates, extraire celle qui a la valeur de NSB la plus élevé (constante : nb_best_day)
