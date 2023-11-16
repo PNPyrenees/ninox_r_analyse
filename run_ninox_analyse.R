@@ -29,13 +29,13 @@ n_day <- n_distinct(all_data$ymd)
 report_txt <- c(
   sprintf("SITE : %s", NOM_SITE),
   sprintf("FICHIER : %s", NOM_FICHIER),
-  sprintf("MEAN : %s", mean),
-  sprintf("MEDIAN : %s", median),
-  sprintf("MODAL : %s", n_day),
-  sprintf("Nb de jours avec mesure : %s", n_day)
+   sprintf("MEAN : %s", round(mean,2)),
+    sprintf("MEDIAN : %s",round( median,2)),
+    sprintf("MODAL : %s", round(sqm_mag_mod, 2)),
+    sprintf("Numbre of days with measurements : %s", n_day)
 )
 writeLines(report_txt, report_path)
 
 # Génération des graphiques
-generate_graph(best_night, NOM_SITE, "meilleurs nuits", sqm_mag_mod)
-generate_graph(all_data, NOM_SITE, "toutes les nuits", sqm_mag_mod)
+generate_graph(best_night, NOM_SITE, "", sqm_mag_mod)
+generate_graph(all_data, NOM_SITE, "All data", sqm_mag_mod)
