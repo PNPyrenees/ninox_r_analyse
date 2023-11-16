@@ -14,15 +14,14 @@ Pour la création des graphiques nous avons exclu les valeurs au dessous de 16 m
 
 # Préparation du jeu de données
 
-Certaines données issues du système de mesure du boitier NINOX ne sont pas mesurés (exemple : "temp_ambiant" Température ambiante x 100 en °C (-10000 si inconnue)), ainsi ces collones ont été enlevés du jeu de données. 
+Certaines données issues du système de mesure du boitier NINOX ne sont pas mesurées (exemple : "temp_ambiant" Température ambiante x 100 en °C (-10000 si inconnue)), ainsi ces colonnes ont été enlevées du jeu de données. 
 
 Pour pouvoir utiliser le fihcier et créer des graphiques, la transformation de la variable jd_utc (jour julien) en date au format yyyy_mm_dd_hh_mm_ss est nécessaire. 
-Afin d'avoir un graphique continu sur la nuit (la nuit du 16 avril comprend des mesures sur le 16 et le 17 avril), une soustraction d'une journée est réalisé (sur les mesures du 17). 
+Afin d'avoir un graphique continu sur les différentes nuits (la nuit du 16 avril comprend des mesures sur le 16 et le 17 avril), une soustraction d'une journée est réalisé (sur les mesures du 17). 
 
 # résultats 
 
-
-
+Valeurs permettant de caractériser la qualité du site. 
 ```
 SITE : Site test
 FICHIER : donnees_exemples/ninox_measure.csv
@@ -33,9 +32,9 @@ Number of days with measurements : 69
 ```
 Ce script permet de réaliser: 
 - des histogrammes permettant de visualiser le nombre de mesures effectué et de visualiser le NSB de référence du site.
-- des graphiques permettant de visualiser le profil des nuits mesurés
-Pour la totalité des données et pour les "meiileures nuits" de mesures.
-Et aussi un graphique permettant d'extraire la nuit avec le meilleur profil et la valeur maximale de NSB. 
+- des graphiques permettant de visualiser le profil des nuits mesurés (seulement avec les points ou coloré en fonction de la fréquence d'occurence des valeurs)
+Pour la totalité des données, pour les "bonnes nuits" et pour la meilleure nuit.
+ 
 
 <p float="left">
 <img src="docs/img/Site_test_meilleurs_nuits_densite2.jpg" width=200 alt="Graphique densité des meilleurs nuits">
