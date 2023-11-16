@@ -35,7 +35,7 @@ process_all <- function(file_name, nom_site, sun_alt_min = SUN_ALT_MIN, diff_sqm
     sprintf("FICHIER : %s", file_name),
     sprintf("MEAN : %s", mean),
     sprintf("MEDIAN : %s", median),
-    sprintf("MODAL : %s", n_day),
+    sprintf("MODAL : %s", sqm_mag_mod),
     sprintf("Nb de jours avec mesure : %s", n_day)
   )
   writeLines(report_txt, report_path)
