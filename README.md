@@ -1,22 +1,41 @@
 # Script R analyse capteurs NINOX
 Script R d'analyse des capteurs NINOX permettant de mesurer la brillance du fond de ciel nocturne. 
-Ces capteurs sont souvent utilisés dans le cadre d'étude sur la pollution lumineuse.
-
-# Résultats
-Script offrant une première analyse des données issues de capteurs ninox.
-
+Ces capteurs sont souvent utilisés dans le cadre d'étude afin de caractériser la pollution lumineuse sur un site.
+Ce script offre une première analyse des données issues de capteurs NINOX.
 A partir d'un fichier de données, le script génère un rapport succinct des données et produit des graphiques.
+
+# Non prises en compte de certaines valeurs du jeu de données 
+Pour la création des figures les valeurs d’altitude de la lune au moment de la mesure, la phase de la lune et les valeurs de longitude et latitude galactique (position de la voie lactée) n'ont pas été prises en compte.
+
+Les valeurs de la qualité du ciel sur les différents sites de mesures étant déja connu, l'extraction des meilleures nuits s'est basé sur ces différentes valeurs. Pour d'autres sites, une exploration des données et une modification des constantes sera surement nécessaire si la qualité du ciel n'est pas équivalente. 
+
+Pour la création des graphiques nous avons exclu les valeurs au dessous de 16 mag/arcsec² et les valeurs au dessus de 23 mag/arcsec². 
+
+
+# Préparation du jeu de données
+
+Certaines données issues du système de mesure du boitier NINOX ne sont pas mesurés (exemple : "temp_ambiant" Température ambiante x 100 en °C (-10000 si inconnue)), ainsi ces collones ont été enlevés du jeu de données. 
+
+Pour pouvoir utiliser le fihcier et créer des graphiques, la transformation de la variable jd_utc (jour julien) en date au format yyyy_mm_dd_hh_mm_ss est nécessaire. 
+Afin d'avoir un graphique continu sur la nuit (la nuit du 16 avril comprend des mesures sur le 16 et le 17 avril), une soustraction d'une journée est réalisé (sur les mesures du 17). 
+
+# résultats 
+
+
 
 ```
 SITE : Site test
 FICHIER : donnees_exemples/ninox_measure.csv
-MEAN : 19.6627550706753
+MEAN : 19.66
 MEDIAN : 20.48
-MODAL : 69
-Nb de jours avec mesure : 69
+MODAL : 21.39
+Number of days with measurements : 69
 ```
-
-Il offre une méthode d'extraction des "meilleurs nuits"
+Ce script permet de réaliser: 
+- des histogrammes permettant de visualiser le nombre de mesures effectué et de visualiser le NSB de référence du site.
+- des graphiques permettant de visualiser le profil des nuits mesurés
+Pour la totalité des données et pour les "meiileures nuits" de mesures.
+Et aussi un graphique permettant d'extraire la nuit avec le meilleur profil et la valeur maximale de NSB. 
 
 <p float="left">
 <img src="docs/img/Site_test_meilleurs_nuits_densite2.jpg" width=200 alt="Graphique densité des meilleurs nuits">
@@ -29,15 +48,23 @@ Il offre une méthode d'extraction des "meilleurs nuits"
 <img src="docs/img/Site_test_toutes_les_nuits_magnitude.jpg" width=200 alt="Graphique magnitude de toutes les nuits">
 </p>
 
-# Extraction des "meilleurs nuits"
+# Extraction des "bonnes nuits"
 
 L'extraction automatique des "meilleurs nuits" est réalisée avec la procédure suivante :
 
- * Extraction des données durant les périodes de nuits noires. Pour extraire ces données nous nous basons sur la valeur de l'altitude du soleil au moment de la mesure qui doit être inférieure à -230
- * Récupération des jours où les valeurs de sqm_mag sont comprises entre 21 et 22.2 et où l'écart entre les deux valeurs ne dépasse pas 1
+ * Extraction des données durant les périodes de nuits noires. Pour extraire ces données nous nous basons sur la valeur de l'altitude du soleil au moment de la mesure (x10 en degrés) qui doit être inférieure à -250
+ * Récupération des jours où les valeurs de sqm_mag sont comprises entre 21 et 22.2 et où l'écart entre les deux valeurs ne dépasse pas 1 (constantes : MIN_SQM_MAG_VAL / MAX_SQM_MAG_VAL / DIFF_SQM_MAG)
  * Extraction de l'ensemble des valeurs dans le fichier d'origine des jours sélectionnés précédemment
 
 Les valeurs ont été choisi de façon arbitraire et sont définies sous forme de constantes que l'on peut modifier lors des appels aux fonctions.
+
+# extraction de la (ou les) meilleure nuit
+
+L'extraction automatique de la meilleur nuit est réalisée avec la procédure suivante : 
+
+* Parmis les meilleurs nuits sélectionnées préalablement, nous avons effectué un calcul permettant de sélectionner les nuits avec le profil le plus plat (constante : nb_flat_day)
+* puis parmis ces nuits les plus plates, extraire celle qui a la valeur de NSB la plus élevé (constante : nb_best_day)
+Le nombre de nuit plates et de meileure nuit sélectionné sont définies sous forme de constantes que l'on peut modifier lors des appels aux fonctions.
 
 # Utilisation du script
 ## Prerequis
