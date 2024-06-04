@@ -36,7 +36,7 @@ process_all <- function(file_name, nom_site, sun_alt_min = SUN_ALT_MIN, diff_sqm
 
   report_txt <- c(
     sprintf("SITE : %s", nom_site),
-    sprintf("FICHIER : %s", file_name),
+    sprintf("FILE : %s", file_name),
     sprintf("MEAN : %s", round(mean,2)),
     sprintf("MEDIAN : %s",round( median,2)),
     sprintf("MODAL : %s", round(sqm_mag_mod, 2)),
@@ -57,14 +57,18 @@ process_all <- function(file_name, nom_site, sun_alt_min = SUN_ALT_MIN, diff_sqm
 load_and_process_file <- function(file_path) {
   # #########################################
   # CHARGEMENT DES DONNEES
-  # chagerment du fichier données brutes
+  # chargement du fichier données brutes
+  # traitement des dates :
+  #     - transformation en date utc
+  #     - calcul du numéro de la nuit
+  # return dataset + date utc + numéro de la nuit
   data <- read.csv2(file_path, header = TRUE, sep = ",", dec = ".")
 
   ## enlever les colonnes sans intéret ou les ninox ne calcule
   # pas les valeurs Temp, humidité, pression etc...
   data <- subset(data, select = -c(az, alt, temp_sensor, temp_ambiant, humidity, pressure, cloud_cover, wind_speed))
 
-  # convertir les jour julien en date normal en ajoutant une colonne
+  # convertion des jours julien en date "classique" en ajoutant une colonne
   data$date <- as.POSIXct(as.Date(data$jd_utc, origin = structure(-2440588 + 0.5, class = "Date")))
 
   # ensuite on va tout separer pour avoir des donnes simple a utiliser et pouvoir manipuler plus facilement
@@ -81,7 +85,7 @@ load_and_process_file <- function(file_path) {
   data <- data %>% mutate(julian_night = yday(date - dhours(12)))
 
   # créer des colonnes qui rassemble les infos année, mois, date
-  # pour povoir sélectionner les données ensuite
+  # pour pouvoir sélectionner les données ensuite
   data$ymd <- paste(data$y, data$m, data$d, sep = "_")
   data$heurevrai <- paste(data$h, data$min, data$sec, sep = ":")
   data$heure_r <- as.POSIXlt(data$heurevrai, format = "%H:%M:%S")
@@ -109,6 +113,9 @@ get_modal_sqm_mag_value <- function(data_in) {
 generate_aggrate_per_night <- function(data_in) {
   # ################################
   # Génération d'un tableau d'aggrégation par nuit
+  # data_in : données à traiter
+  # return tableau des valeurs aggrégé par nuit 
+  # nuit | sqm_mag min | sqm_mag max | somme de la valeur absolue de la dérivé (platitude de la nuit)
 
   # group_by() night - c-ad julian_night
   grp_tbl <- data_in %>% group_by(julian_night)
