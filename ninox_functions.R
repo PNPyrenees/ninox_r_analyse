@@ -1,6 +1,7 @@
 library(lubridate)
 library(dplyr)
 library(ggplot2)
+library(RColorBrewer)
 
 #### Constantes
 # Altitude du soleil au moment de la mesure *10 en degré pour filtrer les données
@@ -236,18 +237,18 @@ generate_graph_magnitude <- function(data_in, nom_site, sous_titre, valeur_modal
   )
 }
 
-generate_graph_density_2 <- function(data_in, nom_site, sous_titre) {
+generate_graph_density_2 <- function(data_in, nom_site, sous_titre, modal) {
   # diagramme de densité
   plot <- ggplot(data_in, aes(x = heure_graph, y = sqm_mag)) +
-    geom_count(aes(color = after_stat(n), size = after_stat(n))) +
-    guides(color = "legend") +
-    scale_y_reverse(breaks = seq(23, 16, -1), limits = c(23, 16)) +
-    ylab("NSB (magsqm/arsec²)") +
-    xlab("Time (UTC)") +
-    ggtitle(
-      sprintf("NINOX %s %s (%s nights)", nom_site, sous_titre, n_distinct(data_in$julian_night))
-    )
-  scale_color_gradient(low = "red", high = "blue")
+      scale_y_reverse(breaks = seq(23, 16, -1), limits = c(23, 16)) +
+      geom_bin2d(bins = 200) +
+        scale_fill_gradientn(colours = rev(brewer.pal(8, "Spectral"))) +
+        theme_bw() +
+        geom_hline(yintercept = modal, linetype = "dashed", color = "blue") +
+        annotate("text",
+          x = max(data_in$heure_graph), y = modal,
+          label = sprintf("modal %s", round(modal, 2)), hjust = 0.8, vjust = -0.5
+        )
 
   ggsave(plot,
     filename = gsub(" ", "_", sprintf("%s_%s_densite2.jpg", nom_site, sous_titre)),
@@ -255,6 +256,7 @@ generate_graph_density_2 <- function(data_in, nom_site, sous_titre) {
     height = 6, width = 5, units = "in"
   )
 }
+
 
 generate_graph_density_all_data <- function(all_night, best_night, flat_night, the_best_night, nom_site, sous_titre="") {
   # diagramme de densité
