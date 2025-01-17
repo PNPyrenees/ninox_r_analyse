@@ -34,6 +34,8 @@ process_all <- function(file_name, nom_site, sun_alt_min = SUN_ALT_MIN, diff_sqm
   sqm_mag_mod <- get_modal_sqm_mag_value(all_data)
   # CALCUL DU nombre jour avec des données :
   n_day <- n_distinct(all_data$ymd)
+  # CALCUL DU nombre de données :
+  n_measure <- n_distinct(all_data$measure_id)
 
   report_txt <- c(
     sprintf("SITE : %s", nom_site),
@@ -41,7 +43,8 @@ process_all <- function(file_name, nom_site, sun_alt_min = SUN_ALT_MIN, diff_sqm
     sprintf("MEAN : %s", round(mean,2)),
     sprintf("MEDIAN : %s",round( median,2)),
     sprintf("MODAL : %s", round(sqm_mag_mod, 2)),
-    sprintf("Number of days with measurements : %s", n_day)
+    sprintf("Number of days with measurements : %s", n_day),
+    sprintf("Number of measure : %s", n_measure)
   )
   writeLines(report_txt, report_path)
 
