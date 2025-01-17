@@ -13,12 +13,12 @@ MAX_SQM_MAG_VAL <- 22.2
 # Différence maximale entre sqm_mag min et max par nuit utilisée pour filtrer les données
 DIFF_SQM_MAG <- 1
 
-process_all <- function(file_name, nom_site, sun_alt_min = SUN_ALT_MIN, diff_sqm_mag = DIFF_SQM_MAG, min_sqm_mag_val = MIN_SQM_MAG_VAL, max_sqm_mag_val = MAX_SQM_MAG_VAL) {
+process_all <- function(file_name, nom_site, year=NULL, sun_alt_min = SUN_ALT_MIN, diff_sqm_mag = DIFF_SQM_MAG, min_sqm_mag_val = MIN_SQM_MAG_VAL, max_sqm_mag_val = MAX_SQM_MAG_VAL) {
   # Chargement et prétraitrement du fichier
-  all_data <- load_and_process_file(file_name)
-  # Selection des meilleurs nuits
-  best_night <- get_best_night(all_data, nb_flat_day = NULL, nb_best_day = NULL,  sun_alt_min, diff_sqm_mag, min_sqm_mag_val, max_sqm_mag_val)
+  all_data <- load_and_process_file(file_name, year)
 
+  # Selection des meilleurs nuits
+  best_night <- get_best_night(all_data, nb_flat_day = NULL, nb_best_day = NULL, sun_alt_min, diff_sqm_mag, min_sqm_mag_val, max_sqm_mag_val)
   flat_night <- get_best_night(all_data, nb_flat_day = 10, nb_best_day = NULL, sun_alt_min, diff_sqm_mag, min_sqm_mag_val, max_sqm_mag_val)
   the_best_night<- get_best_night(all_data, nb_flat_day = 10, nb_best_day = 1, sun_alt_min, diff_sqm_mag, min_sqm_mag_val, max_sqm_mag_val)
 
@@ -58,7 +58,7 @@ process_all <- function(file_name, nom_site, sun_alt_min = SUN_ALT_MIN, diff_sqm
 
 }
 
-load_and_process_file <- function(file_path) {
+load_and_process_file <- function(file_path, year=NULL) {
   # #########################################
   # CHARGEMENT DES DONNEES
   # chargement du fichier données brutes
@@ -87,6 +87,11 @@ load_and_process_file <- function(file_path) {
   # calcul du "numéro de la nuit" basé sur des jours julien : jour de l'année(jour - 12h)
   data <- data %>% mutate(day_night = date - dhours(12))
   data <- data %>% mutate(julian_night = yday(date - dhours(12)))
+
+  # Filtre par année
+  if (!is.null(year)) {
+    data <- subset(data, y == year)
+  }
 
   # créer des colonnes qui rassemble les infos année, mois, date
   # pour pouvoir sélectionner les données ensuite
