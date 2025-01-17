@@ -43,7 +43,7 @@ Pour la totalité des données, pour les "bonnes nuits" et pour la meilleure nui
 <img src="docs/img/Site_test_meilleurs_nuits_magnitude.jpg" width=200 alt="Graphique magnitude des meilleurs nuits">
 </p>
 <p float="left">
-<img src="docs/img/Site_test_toutes_les_nuits_densite2.jpg" width=200 alt="Graphique densité de toutes les nuits">
+<img src="docs/img/Site_test_Nuits_sans_lune_heatmap.jpg" width=200 alt="Graphique densité de toutes les nuits sans lune">
 <img src="docs/img/Site_test_toutes_les_nuits_densite.jpg" width=200 alt="Graphique densité de toutes les nuits">
 <img src="docs/img/Site_test_toutes_les_nuits_magnitude.jpg" width=200 alt="Graphique magnitude de toutes les nuits">
 </p>
