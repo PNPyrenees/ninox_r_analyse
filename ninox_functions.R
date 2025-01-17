@@ -22,40 +22,61 @@ process_all <- function(file_name, nom_site, year=NULL, sun_alt_min = SUN_ALT_MI
   flat_night <- get_best_night(all_data, nb_flat_day = 10, nb_best_day = NULL, sun_alt_min, diff_sqm_mag, min_sqm_mag_val, max_sqm_mag_val)
   the_best_night<- get_best_night(all_data, nb_flat_day = 10, nb_best_day = 1, sun_alt_min, diff_sqm_mag, min_sqm_mag_val, max_sqm_mag_val)
 
+  # Selection des nuits dans lune
+  data_without_moon <- subset(x = all_data, subset = moon_alt < 0)
 
   # # #########################################
   # # Rapport du lot de données
-  report_path <- sprintf("%s.txt", nom_site)
-  # moyenne :
-  mean <- mean(all_data$sqm_mag)
-  # mediane :
-  median <- median(all_data$sqm_mag)
-  # Modal
-  sqm_mag_mod <- get_modal_sqm_mag_value(all_data)
-  # CALCUL DU nombre jour avec des données :
-  n_day <- n_distinct(all_data$ymd)
-  # CALCUL DU nombre de données :
-  n_measure <- n_distinct(all_data$measure_id)
-
-  report_txt <- c(
-    sprintf("SITE : %s", nom_site),
-    sprintf("FILE : %s", file_name),
-    sprintf("MEAN : %s", round(mean,2)),
-    sprintf("MEDIAN : %s",round( median,2)),
-    sprintf("MODAL : %s", round(sqm_mag_mod, 2)),
-    sprintf("Number of days with measurements : %s", n_day),
-    sprintf("Number of measure : %s", n_measure)
-  )
-  writeLines(report_txt, report_path)
-
+  stats <- calculate_stats_data(all_data)
+  print_report(stats, file_name, nom_site)
+ 
   # Génération des graphiques
   generate_graph(best_night, nom_site, "", sqm_mag_mod)
   generate_graph(all_data, nom_site, "All data", sqm_mag_mod)
-
+  generate_graph_density_heatmap(data_without_moon, nom_site, "Nuits sans lune", sqm_mag_mod)
   generate_graph_density(the_best_night, nom_site, sprintf("%s", min(as.Date(the_best_night$date))))
 
   generate_graph_density_all_data(all_data, best_night, flat_night, the_best_night, nom_site )
 
+}
+
+print_report <- function(stats, file_name, nom_site) {
+  report_path <- sprintf("%s.txt", nom_site)
+  report_txt <- c(
+    sprintf("SITE : %s", nom_site),
+    sprintf("FILE : %s", file_name),
+    sprintf("MEAN : %s", round(stats$mean, 2)),
+    sprintf("MEDIAN : %s", round(stats$median, 2)),
+    sprintf("MODAL : %s", round(stats$sqm_mag_mod, 2)),
+    sprintf("Number of days with measurements : %s", stats$n_day),
+    sprintf("Number of measure sqm > 21 : %s", stats$n_measure_21),
+    sprintf("Number of measure : %s", stats$n_measure)
+  )
+  writeLines(report_txt, report_path)
+}
+
+calculate_stats_data <- function(data_in) {
+  mean <- mean(data_in$sqm_mag)
+  # mediane :
+  median <- median(data_in$sqm_mag)
+  # Modal
+  sqm_mag_mod <- get_modal_sqm_mag_value(data_in)
+  # CALCUL DU nombre jour avec des données :
+  n_day <- n_distinct(data_in$ymd)
+  # CALCUL DU nombre de données :
+  n_measure <- n_distinct(data_in$measure_id)
+  # CALCUL DU nombre de données avec un sql > 21:
+  n_measure_21 <- n_distinct(data_in$measure_id[data_in$sqm_mag > 21])
+
+  stats <- list(
+    "mean" = mean,
+    "median" = median,
+    "sqm_mag_mod" = sqm_mag_mod,
+    "n_day" = n_day,
+    "n_measure" = n_measure,
+    "n_measure_21" = n_measure_21
+  )
+  return(stats)
 }
 
 load_and_process_file <- function(file_path, year=NULL) {
@@ -67,6 +88,8 @@ load_and_process_file <- function(file_path, year=NULL) {
   #     - calcul du numéro de la nuit
   # return dataset + date utc + numéro de la nuit
   data <- read.csv2(file_path, header = TRUE, sep = ",", dec = ".")
+  # Suppression des données sans sqm_mag
+  all_data <- subset(data, sqm_mag == NA)
 
   ## enlever les colonnes sans intéret ou les ninox ne calcule
   # pas les valeurs Temp, humidité, pression etc...
@@ -188,7 +211,6 @@ get_best_night <- function(data_in, nb_flat_day = NULL, nb_best_day = NULL, sun_
 generate_graph <- function(data_in, nom_site, sous_titre, valeur_modal) {
   generate_graph_density(data_in, nom_site, sous_titre)
   generate_graph_magnitude(data_in, nom_site, sous_titre, valeur_modal)
-  generate_graph_density_2(data_in, nom_site, sous_titre)
 }
 
 generate_graph_density <- function(data_in, nom_site, sous_titre) {
@@ -245,7 +267,7 @@ generate_graph_magnitude <- function(data_in, nom_site, sous_titre, valeur_modal
   )
 }
 
-generate_graph_density_2 <- function(data_in, nom_site, sous_titre, modal) {
+generate_graph_density_heatmap <- function(data_in, nom_site, sous_titre, modal) {
   # diagramme de densité
   plot <- ggplot(data_in, aes(x = heure_graph, y = sqm_mag)) +
       scale_y_reverse(breaks = seq(23, 16, -1), limits = c(23, 16)) +
@@ -259,7 +281,7 @@ generate_graph_density_2 <- function(data_in, nom_site, sous_titre, modal) {
         )
 
   ggsave(plot,
-    filename = gsub(" ", "_", sprintf("%s_%s_densite2.jpg", nom_site, sous_titre)),
+    filename = gsub(" ", "_", sprintf("%s_%s_heatmap.jpg", nom_site, sous_titre)),
     device = "jpg",
     height = 6, width = 5, units = "in"
   )
