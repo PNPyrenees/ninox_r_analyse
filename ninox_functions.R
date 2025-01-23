@@ -13,9 +13,14 @@ MAX_SQM_MAG_VAL <- 22.2
 # Différence maximale entre sqm_mag min et max par nuit utilisée pour filtrer les données
 DIFF_SQM_MAG <- 1
 
-process_all <- function(file_name, nom_site, year=NULL, sun_alt_min = SUN_ALT_MIN, diff_sqm_mag = DIFF_SQM_MAG, min_sqm_mag_val = MIN_SQM_MAG_VAL, max_sqm_mag_val = MAX_SQM_MAG_VAL) {
+process_all <- function(file_name, nom_site, format="csv", year=NULL, sun_alt_min = SUN_ALT_MIN, diff_sqm_mag = DIFF_SQM_MAG, min_sqm_mag_val = MIN_SQM_MAG_VAL, max_sqm_mag_val = MAX_SQM_MAG_VAL) {
   # Chargement et prétraitrement du fichier
-  all_data <- load_and_process_file(file_name, year)
+  if (format == "csv") {
+    all_data <- load_and_process_file_csv(file_name, year)
+  }
+  else {
+    all_data <- load_and_process_file_from_log(file_name, year)
+  }
 
   # Selection des meilleurs nuits
   best_night <- get_best_night(all_data, nb_flat_day = NULL, nb_best_day = NULL, sun_alt_min, diff_sqm_mag, min_sqm_mag_val, max_sqm_mag_val)
@@ -31,9 +36,9 @@ process_all <- function(file_name, nom_site, year=NULL, sun_alt_min = SUN_ALT_MI
   print_report(stats, file_name, nom_site)
  
   # Génération des graphiques
-  generate_graph(best_night, nom_site, "", sqm_mag_mod)
-  generate_graph(all_data, nom_site, "All data", sqm_mag_mod)
-  generate_graph_density_heatmap(data_without_moon, nom_site, "Nuits sans lune", sqm_mag_mod)
+  generate_graph(best_night, nom_site, "", stats$sqm_mag_mod)
+  generate_graph(all_data, nom_site, "All data", stats$sqm_mag_mod)
+  generate_graph_density_heatmap(data_without_moon, nom_site, "Nuits sans lune", stats$sqm_mag_mod)
   generate_graph_density(the_best_night, nom_site, sprintf("%s", min(as.Date(the_best_night$date))))
 
   generate_graph_density_all_data(all_data, best_night, flat_night, the_best_night, nom_site )
@@ -79,17 +84,16 @@ calculate_stats_data <- function(data_in) {
   return(stats)
 }
 
-load_and_process_file <- function(file_path, year=NULL) {
+load_and_process_file_csv <- function(file_path, year = NULL) {
   # #########################################
   # CHARGEMENT DES DONNEES
   # chargement du fichier données brutes
+  #   issue de l'export csv généré par le boitier NINOX
   # traitement des dates :
   #     - transformation en date utc
   #     - calcul du numéro de la nuit
   # return dataset + date utc + numéro de la nuit
   data <- read.csv2(file_path, header = TRUE, sep = ",", dec = ".")
-  # Suppression des données sans sqm_mag
-  all_data <- subset(data, sqm_mag == NA)
 
   ## enlever les colonnes sans intéret ou les ninox ne calcule
   # pas les valeurs Temp, humidité, pression etc...
@@ -97,6 +101,44 @@ load_and_process_file <- function(file_path, year=NULL) {
 
   # convertion des jours julien en date "classique" en ajoutant une colonne
   data$date <- as.POSIXct(as.Date(data$jd_utc, origin = structure(-2440588 + 0.5, class = "Date")))
+  data <- clean_date(data) # Filtre par année
+
+  if (!is.null(year)) {
+    data <- subset(data, y == year)
+  }
+
+  return(data)
+}
+
+load_and_process_file_from_log <- function(file_path, year = NULL) {
+  # #########################################
+  # CHARGEMENT DES DONNEES
+  # chargement du fichier données brutes
+  #   issue du fichier de log des données ninox
+  # traitement des dates :
+  #     - transformation en date utc
+  #     - calcul du numéro de la nuit
+  # return dataset + date utc + numéro de la nuit
+
+  data <- read.csv2(file_path, header = TRUE, sep = ",", dec = ".")
+
+  data$date <- ymd_hms(data$date)
+  data <- clean_date(data)
+  # Filtre par année
+  if (!is.null(year)) {
+    data <- subset(data, y == year)
+  }
+
+  return(data)
+
+}
+
+
+clean_date <- function(data) {
+  # #########################################
+  # Génération des données date nécessaire à l'analyse
+  # calcul des jours julien
+  # calcul du numéro de la nuit (qui est à cheval sur 2 jours)
 
   # ensuite on va tout separer pour avoir des donnes simple a utiliser et pouvoir manipuler plus facilement
   # créer une colonne pour chaque objet (y,m,d...)
@@ -111,10 +153,6 @@ load_and_process_file <- function(file_path, year=NULL) {
   data <- data %>% mutate(day_night = date - dhours(12))
   data <- data %>% mutate(julian_night = yday(date - dhours(12)))
 
-  # Filtre par année
-  if (!is.null(year)) {
-    data <- subset(data, y == year)
-  }
 
   # créer des colonnes qui rassemble les infos année, mois, date
   # pour pouvoir sélectionner les données ensuite
@@ -132,6 +170,7 @@ load_and_process_file <- function(file_path, year=NULL) {
 
   return(data)
 }
+
 
 get_modal_sqm_mag_value <- function(data_in) {
   # CALCUL DE LA VALEUR MODAL
