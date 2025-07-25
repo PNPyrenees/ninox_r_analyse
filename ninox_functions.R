@@ -12,8 +12,10 @@ MIN_SQM_MAG_VAL <- 21
 MAX_SQM_MAG_VAL <- 22.2
 # Différence maximale entre sqm_mag min et max par nuit utilisée pour filtrer les données
 DIFF_SQM_MAG <- 1
+# Désactivation par défaut du calcul des graphiques de ensité par nuit
+GET_GRAPH_PER_NIGHT <- FALSE
 
-process_all <- function(file_name, nom_site, format="csv", year=NULL, sun_alt_min = SUN_ALT_MIN, diff_sqm_mag = DIFF_SQM_MAG, min_sqm_mag_val = MIN_SQM_MAG_VAL, max_sqm_mag_val = MAX_SQM_MAG_VAL, get_graph_per_night = FALSE) {
+process_all <- function(file_name, nom_site, format="csv", year=NULL, sun_alt_min = SUN_ALT_MIN, diff_sqm_mag = DIFF_SQM_MAG, min_sqm_mag_val = MIN_SQM_MAG_VAL, max_sqm_mag_val = MAX_SQM_MAG_VAL, get_graph_per_night = GET_GRAPH_PER_NIGHT) {
   # Chargement et prétraitrement du fichier
   if (format == "csv") {
     all_data <- load_and_process_file_csv(file_name, year)
@@ -267,13 +269,6 @@ generate_graph_per_nigth <- function(data_in, nom_site) {
   # #########################################
   # GRAPHIQUE
   # Graphique de densité pour chaque nuit
-
-
-  print("data_in : ")
-  print(data_in)  
-
-  print("filtre table test") 
-  print(filter(data_in, julian_night == 196))
 
   #Création du dossier de destination
   dir.create("par_nuits", showWarnings = FALSE)
